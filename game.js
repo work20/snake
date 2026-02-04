@@ -144,11 +144,12 @@ class LeaderboardManager {
 
 // 答案方块
 class AnswerBlock {
-    constructor(x, y, value, isCorrect) {
+    constructor(x, y, value, isCorrect, color) {
         this.x = x;
         this.y = y;
         this.value = value;
         this.isCorrect = isCorrect;
+        this.color = color;
     }
 }
 
@@ -157,7 +158,7 @@ class Game {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
-        this.gridSize = 20;
+        this.gridSize = 30;
         this.gridWidth = this.canvas.width / this.gridSize;
         this.gridHeight = this.canvas.height / this.gridSize;
         
@@ -176,6 +177,16 @@ class Game {
         // 触摸控制变量
         this.touchStartX = 0;
         this.touchStartY = 0;
+        
+        // 答案方块颜色池
+        this.blockColors = [
+            '#95E1D3', // 浅绿色
+            '#FF8B94', // 浅红色
+            '#A8D8EA', // 浅蓝色
+            '#FFD93D', // 黄色
+            '#6BCB77', // 绿色
+            '#FF6B6B'  // 红色
+        ];
         
         this.loadHighScore();
         this.setupEventListeners();
@@ -351,7 +362,11 @@ class Game {
         this.answerBlocks = [];
         const occupiedPositions = new Set();
         
-        for (let answer of allAnswers) {
+        // 为每个答案分配随机颜色
+        const shuffledColors = [...this.blockColors];
+        this.shuffleArray(shuffledColors);
+        
+        for (let i = 0; i < allAnswers.length; i++) {
             let x, y;
             do {
                 x = Math.floor(Math.random() * this.gridWidth);
@@ -359,7 +374,9 @@ class Game {
             } while (this.isPositionOccupied(x, y, occupiedPositions));
             
             occupiedPositions.add(`${x},${y}`);
-            this.answerBlocks.push(new AnswerBlock(x, y, answer, answer === correctAnswer));
+            const isCorrect = allAnswers[i] === correctAnswer;
+            const color = shuffledColors[i];
+            this.answerBlocks.push(new AnswerBlock(x, y, allAnswers[i], isCorrect, color));
         }
     }
     
@@ -492,7 +509,7 @@ class Game {
             const x = block.x * this.gridSize;
             const y = block.y * this.gridSize;
             
-            this.ctx.fillStyle = block.isCorrect ? '#95E1D3' : '#FF8B94';
+            this.ctx.fillStyle = block.color;
             this.ctx.fillRect(x + 1, y + 1, this.gridSize - 2, this.gridSize - 2);
             
             this.ctx.strokeStyle = '#2C3E50';
@@ -500,7 +517,7 @@ class Game {
             this.ctx.strokeRect(x + 1, y + 1, this.gridSize - 2, this.gridSize - 2);
             
             this.ctx.fillStyle = '#2C3E50';
-            this.ctx.font = 'bold 12px Arial';
+            this.ctx.font = 'bold 16px Arial';
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
             this.ctx.fillText(block.value, x + this.gridSize / 2, y + this.gridSize / 2);

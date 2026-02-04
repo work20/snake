@@ -108,14 +108,12 @@ class LeaderboardManager {
     saveScore(name, score) {
         const leaderboard = this.getLeaderboard();
         const date = new Date();
-        const timeString = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-        const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        const dateString = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
         
         leaderboard.push({
             name: name,
             score: score,
-            date: dateString,
-            time: timeString
+            date: dateString
         });
         
         leaderboard.sort((a, b) => b.score - a.score);
@@ -587,7 +585,7 @@ class Game {
                     <td class="${rankClass}">${rankIcon}</td>
                     <td class="${rankClass}">${entry.name}</td>
                     <td class="${rankClass}">${entry.score}</td>
-                    <td class="${rankClass}">${entry.time}</td>
+                    <td class="${rankClass}">${entry.date}</td>
                 `;
                 tbody.appendChild(row);
             });

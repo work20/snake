@@ -173,6 +173,10 @@ class Game {
         this.questionGenerator = new QuestionGenerator();
         this.leaderboard = new LeaderboardManager();
         
+        // 触摸控制变量
+        this.touchStartX = 0;
+        this.touchStartY = 0;
+        
         this.loadHighScore();
         this.setupEventListeners();
         this.drawInitialScreen();
@@ -210,12 +214,9 @@ class Game {
         });
         
         // 触摸控制
-        let touchStartX = 0;
-        let touchStartY = 0;
-        
         this.canvas.addEventListener('touchstart', (e) => {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
+            this.touchStartX = e.touches[0].clientX;
+            this.touchStartY = e.touches[0].clientY;
             e.preventDefault();
         });
         
@@ -229,15 +230,16 @@ class Game {
             const touchEndX = e.changedTouches[0].clientX;
             const touchEndY = e.changedTouches[0].clientY;
             
-            const dx = touchEndX - touchStartX;
-            const dy = touchEndY - touchStartY;
+            const dx = touchEndX - this.touchStartX;
+            const dy = touchEndY - this.touchStartY;
             
+            // 降低阈值，使操作更灵敏（从30改为20）
             if (Math.abs(dx) > Math.abs(dy)) {
-                if (dx > 30) this.snake.changeDirection('right');
-                else if (dx < -30) this.snake.changeDirection('left');
+                if (dx > 20) this.snake.changeDirection('right');
+                else if (dx < -20) this.snake.changeDirection('left');
             } else {
-                if (dy > 30) this.snake.changeDirection('down');
-                else if (dy < -30) this.snake.changeDirection('up');
+                if (dy > 20) this.snake.changeDirection('down');
+                else if (dy < -20) this.snake.changeDirection('up');
             }
             
             e.preventDefault();

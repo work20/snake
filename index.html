@@ -15,7 +15,7 @@
         </div>
         
         <div class="canvas-container">
-            <canvas id="gameCanvas" width="360" height="520"></canvas>
+            <canvas id="gameCanvas" width="360" height="440"></canvas>
         </div>
         
         <div class="score-display">
@@ -23,11 +23,26 @@
             <span>最高分：<span id="highScore">0</span></span>
         </div>
         
-        <div class="control-buttons">
-            <button id="startBtn">开始</button>
-            <button id="pauseBtn">暂停</button>
-            <button id="restartBtn">重新开始</button>
-            <button id="showLeaderboardBtn">🏆 查看排行榜</button>
+        <!-- 按钮区域：左边方向键，右边控制按钮 -->
+        <div class="button-area">
+            <!-- 左侧：方向控制按键 -->
+            <div class="d-pad">
+                <button class="d-pad-btn d-pad-up" id="btnUp">▲</button>
+                <div class="d-pad-row">
+                    <button class="d-pad-btn d-pad-left" id="btnLeft">◀</button>
+                    <button class="d-pad-btn d-pad-center"></button>
+                    <button class="d-pad-btn d-pad-right" id="btnRight">▶</button>
+                </div>
+                <button class="d-pad-btn d-pad-down" id="btnDown">▼</button>
+            </div>
+            
+            <!-- 右侧：控制按钮 -->
+            <div class="control-buttons">
+                <button id="startBtn">开始</button>
+                <button id="pauseBtn">暂停</button>
+                <button id="restartBtn">重新开始</button>
+                <button id="showLeaderboardBtn">🏆 查看排行榜</button>
+            </div>
         </div>
         
         <div class="instructions">

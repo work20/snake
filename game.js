@@ -165,7 +165,7 @@ class Game {
         this.highScore = 0;
         this.isRunning = false;
         this.isPaused = false;
-        this.gameSpeed = 150;
+        this.gameSpeed = 250;
         
         this.snake = null;
         this.currentQuestion = null;
@@ -243,6 +243,40 @@ class Game {
             }
             
             e.preventDefault();
+        });
+        
+        // 方向按键控制
+        document.getElementById('btnUp').addEventListener('click', () => {
+            if (this.isRunning && !this.isPaused) {
+                this.snake.changeDirection('up');
+            }
+        });
+        
+        document.getElementById('btnDown').addEventListener('click', () => {
+            if (this.isRunning && !this.isPaused) {
+                this.snake.changeDirection('down');
+            }
+        });
+        
+        document.getElementById('btnLeft').addEventListener('click', () => {
+            if (this.isRunning && !this.isPaused) {
+                this.snake.changeDirection('left');
+            }
+        });
+        
+        document.getElementById('btnRight').addEventListener('click', () => {
+            if (this.isRunning && !this.isPaused) {
+                this.snake.changeDirection('right');
+            }
+        });
+        
+        // 防止方向按键的触摸事件冒泡
+        const dPadButtons = document.querySelectorAll('.d-pad-btn');
+        dPadButtons.forEach(btn => {
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                btn.click();
+            });
         });
     }
     

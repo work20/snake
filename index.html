@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学贪吃蛇</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="game-title">🐍 数学贪吃蛇</h1>
+        
+        <div class="question-display">
+            题目：<span id="questionText">5 + 3 = ?</span>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="600" height="400"></canvas>
+        </div>
+        
+        <div class="score-display">
+            <span>分数：<span id="score">0</span></span>
+            <span>最高分：<span id="highScore">0</span></span>
+        </div>
+        
+        <div class="control-buttons">
+            <button id="startBtn">开始</button>
+            <button id="pauseBtn">暂停</button>
+            <button id="restartBtn">重新开始</button>
+            <button id="showLeaderboardBtn">🏆 查看排行榜</button>
+        </div>
+        
+        <div class="instructions">
+            <p>使用方向键控制蛇的移动 | 空格键暂停/继续</p>
+        </div>
+    </div>
+    
+    <!-- 名字输入弹窗 -->
+    <div id="nameInputModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>游戏结束！</h2>
+            <p class="final-score">你的分数：<span id="finalScore">0</span></p>
+            <p class="high-score-message">🎉 恭喜！你进入了前10名！</p>
+            <input type="text" id="playerName" class="name-input" placeholder="请输入你的名字" maxlength="10">
+            <div class="modal-buttons">
+                <button id="saveScoreBtn" class="btn-primary">保存并查看排行榜</button>
+                <button id="skipSaveBtn" class="btn-secondary">跳过</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 排行榜弹窗 -->
+    <div id="leaderboardModal" class="modal hidden">
+        <div class="modal-content leaderboard-content">
+            <h2>🏆 排行榜 🏆</h2>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>排名</th>
+                        <th>玩家</th>
+                        <th>分数</th>
+                        <th>时间</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                </tbody>
+            </table>
+            <div class="modal-buttons">
+                <button id="clearLeaderboardBtn" class="btn-danger">清除排行榜</button>
+                <button id="closeLeaderboardBtn" class="btn-secondary">关闭</button>
+                <button id="restartFromLeaderboardBtn" class="btn-primary">重新开始</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 游戏结束弹窗（未进入排行榜） -->
+    <div id="gameOverModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>游戏结束！</h2>
+            <p class="final-score">你的分数：<span id="gameOverScore">0</span></p>
+            <p class="game-over-message">很遗憾，未能进入前10名</p>
+            <div class="modal-buttons">
+                <button id="viewLeaderboardBtn" class="btn-secondary">查看排行榜</button>
+                <button id="restartFromGameOverBtn" class="btn-primary">重新开始</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>

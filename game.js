@@ -208,11 +208,6 @@ class Game {
         document.getElementById('saveScoreBtn').addEventListener('click', () => this.saveScore());
         document.getElementById('skipSaveBtn').addEventListener('click', () => this.hideNameInputModal());
         document.getElementById('closeLeaderboardBtn').addEventListener('click', () => this.hideLeaderboard());
-        document.getElementById('clearLeaderboardBtn').addEventListener('click', () => this.clearLeaderboard());
-        document.getElementById('restartFromLeaderboardBtn').addEventListener('click', () => {
-            this.hideLeaderboard();
-            this.restart();
-        });
         document.getElementById('viewLeaderboardBtn').addEventListener('click', () => {
             this.hideGameOverModal();
             this.showLeaderboard();

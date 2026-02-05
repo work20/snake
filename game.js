@@ -164,7 +164,8 @@ class Game {
         this.highScore = 0;
         this.isRunning = false;
         this.isPaused = false;
-        this.gameSpeed = 250;
+        this.gameSpeed = 400;
+        this.successCount = 0; // 追踪成功吃下方块的次数
         
         this.snake = null;
         this.currentQuestion = null;
@@ -316,6 +317,8 @@ class Game {
         
         this.snake = new Snake(Math.floor(this.gridWidth / 2), Math.floor(this.gridHeight / 2));
         this.score = 0;
+        this.successCount = 0; // 重置成功计数
+        this.gameSpeed = 400; // 重置初始速度
         this.isRunning = true;
         this.isPaused = false;
         
@@ -362,8 +365,9 @@ class Game {
         for (let i = 0; i < allAnswers.length; i++) {
             let x, y;
             do {
-                x = Math.floor(Math.random() * this.gridWidth);
-                y = Math.floor(Math.random() * this.gridHeight);
+                // 限制答案方块不出现在边缘方格（保留1格边距）
+                x = 1 + Math.floor(Math.random() * (this.gridWidth - 2));
+                y = 1 + Math.floor(Math.random() * (this.gridHeight - 2));
             } while (this.isPositionOccupied(x, y, occupiedPositions));
             
             occupiedPositions.add(`${x},${y}`);
@@ -426,6 +430,13 @@ class Game {
                 if (block.isCorrect) {
                     this.score += 10;
                     this.snake.grow();
+                    this.successCount++; // 增加成功计数
+                    
+                    // 每吃5次方块，速度增加50ms（减少gameSpeed值）
+                    if (this.successCount % 5 === 0 && this.gameSpeed > 50) {
+                        this.gameSpeed -= 50;
+                    }
+                    
                     this.updateScoreDisplay();
                     this.generateQuestion();
                 } else {

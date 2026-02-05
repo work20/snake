@@ -74,7 +74,8 @@ class Snake {
             'right': 'left'
         };
         
-        if (opposite[newDir] !== this.direction) {
+        // 检查新方向是否与下一次移动的方向相反
+        if (opposite[newDir] !== this.nextDirection) {
             this.nextDirection = newDir;
         }
     }
@@ -108,7 +109,7 @@ class LeaderboardManager {
     saveScore(name, score) {
         const leaderboard = this.getLeaderboard();
         const date = new Date();
-        const dateString = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
+        const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         
         leaderboard.push({
             name: name,
@@ -368,7 +369,9 @@ class Game {
                 // 限制答案方块不出现在边缘方格（保留1格边距）
                 x = 1 + Math.floor(Math.random() * (this.gridWidth - 2));
                 y = 1 + Math.floor(Math.random() * (this.gridHeight - 2));
-            } while (this.isPositionOccupied(x, y, occupiedPositions));
+            } while (this.isPositionOccupied(x, y, occupiedPositions) || 
+                     this.isTooCloseToHead(x, y) || 
+                     this.isTooCloseToOtherBlocks(x, y, occupiedPositions));
             
             occupiedPositions.add(`${x},${y}`);
             const isCorrect = allAnswers[i] === correctAnswer;
@@ -387,6 +390,25 @@ class Game {
             if (x === segment.x && y === segment.y) return true;
         }
         
+        return false;
+    }
+    
+    // 检查位置是否距离蛇头太近（小于等于5个方块）
+    isTooCloseToHead(x, y) {
+        const head = this.snake.getHead();
+        const distance = Math.abs(x - head.x) + Math.abs(y - head.y);
+        return distance <= 5;
+    }
+    
+    // 检查位置是否与其他已生成的答案方块距离太近（小于等于1个方块）
+    isTooCloseToOtherBlocks(x, y, occupiedPositions) {
+        for (let pos of occupiedPositions) {
+            const [ox, oy] = pos.split(',').map(Number);
+            const distance = Math.abs(x - ox) + Math.abs(y - oy);
+            if (distance <= 1) {
+                return true;
+            }
+        }
         return false;
     }
     
@@ -438,6 +460,8 @@ class Game {
                     }
                     
                     this.updateScoreDisplay();
+                    // 清空所有答案方块，避免在下一帧碰撞到其他方块
+                    this.answerBlocks = [];
                     this.generateQuestion();
                 } else {
                     this.gameOver();

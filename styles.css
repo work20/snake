@@ -41,34 +41,37 @@ body {
     font-weight: bold;
 }
 
-/* 难度显示区域 */
-.difficulty-display {
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: 1.1em;
+/* 难度行特殊样式 */
+.difficulty-row {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 10px;
+}
+
+.difficulty-label {
+    font-size: 14px;
     font-weight: bold;
     color: #667eea;
 }
 
-/* 难度选择按钮容器 */
-.difficulty-selector {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 15px;
+.difficulty-value {
+    font-size: 14px;
+    font-weight: bold;
+    color: #667eea;
+    min-width: 40px;
 }
 
-/* 难度按钮样式 */
 .difficulty-btn {
-    padding: 8px 20px;
+    padding: 6px 16px;
     border: 2px solid #667eea;
     border-radius: 10px;
     background: white;
     color: #667eea;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
+    flex: 0 0 auto;
 }
 
 .difficulty-btn:hover:not(:disabled) {
@@ -138,7 +141,7 @@ body {
 .button-area {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 20px;
     margin: 10px 0;
 }
@@ -150,18 +153,21 @@ body {
 .control-buttons {
     flex: 1;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-direction: column;
+    gap: 10px;
     min-width: 150px;
 }
 
-.control-buttons button {
-    flex: 1 1 calc(50% - 4px);
-    min-width: 80px;
+.control-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
 }
 
-.control-buttons button {
+.control-row button {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 80px;
     padding: 10px 12px;
     border: none;
     border-radius: 10px;
@@ -454,21 +460,6 @@ body {
         margin-bottom: 6px;
     }
 
-    .difficulty-display {
-        font-size: 0.9em;
-        margin-bottom: 8px;
-    }
-
-    .difficulty-selector {
-        gap: 10px;
-        margin-bottom: 10px;
-    }
-
-    .difficulty-btn {
-        padding: 6px 15px;
-        font-size: 12px;
-    }
-
     .canvas-container {
         margin-bottom: 6px;
     }
@@ -501,12 +492,34 @@ body {
         gap: 6px;
         min-width: 120px;
     }
-    
-    .control-buttons button {
+
+    .control-row {
+        gap: 6px;
+    }
+
+    .control-row button {
         padding: 8px 10px;
         font-size: 13px;
         flex: 1 1 calc(50% - 3px);
         min-width: 70px;
+    }
+
+    .difficulty-row {
+        padding: 6px;
+    }
+
+    .difficulty-label {
+        font-size: 12px;
+    }
+
+    .difficulty-value {
+        font-size: 12px;
+        min-width: 35px;
+    }
+
+    .difficulty-btn {
+        padding: 5px 12px;
+        font-size: 11px;
     }
     
     .modal-content {

@@ -14,26 +14,15 @@
             题目：<span id="questionText">5 + 3 = ?</span>
         </div>
 
-        <!-- 难度显示区域 -->
-        <div class="difficulty-display">
-            <span>难度：<span id="difficultyDisplay">容易</span></span>
-        </div>
-
-        <!-- 难度选择按钮 -->
-        <div class="difficulty-selector">
-            <button id="difficultyEasyBtn" class="difficulty-btn">容易</button>
-            <button id="difficultyHardBtn" class="difficulty-btn">困难</button>
-        </div>
-
         <div class="canvas-container">
             <canvas id="gameCanvas" width="360" height="390"></canvas>
         </div>
-        
+
         <div class="score-display">
             <span>分数：<span id="score">0</span></span>
             <span>最高分：<span id="highScore">0</span></span>
         </div>
-        
+
         <!-- 按钮区域：左边方向键，右边控制按钮 -->
         <div class="button-area">
             <!-- 左侧：方向控制按键 -->
@@ -46,13 +35,28 @@
                 </div>
                 <button class="d-pad-btn d-pad-down" id="btnDown">▼</button>
             </div>
-            
-            <!-- 右侧：控制按钮 -->
+
+            <!-- 右侧：控制按钮（垂直布局） -->
             <div class="control-buttons">
-                <button id="startBtn">开始</button>
-                <button id="pauseBtn">暂停</button>
-                <button id="restartBtn">重新开始</button>
-                <button id="showLeaderboardBtn">🏆 查看排行榜</button>
+                <!-- 第一行：难度选择 -->
+                <div class="control-row difficulty-row">
+                    <span class="difficulty-label">难度：</span>
+                    <span id="difficultyDisplay" class="difficulty-value">容易</span>
+                    <button id="difficultyEasyBtn" class="difficulty-btn">容易</button>
+                    <button id="difficultyHardBtn" class="difficulty-btn">困难</button>
+                </div>
+
+                <!-- 第二行：开始 + 暂停 -->
+                <div class="control-row">
+                    <button id="startBtn">开始</button>
+                    <button id="pauseBtn">暂停</button>
+                </div>
+
+                <!-- 第三行：重新开始 + 排行榜 -->
+                <div class="control-row">
+                    <button id="restartBtn">重新开始</button>
+                    <button id="showLeaderboardBtn">🏆 查看排行榜</button>
+                </div>
             </div>
         </div>
         

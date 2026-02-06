@@ -1,33 +1,69 @@
+// 难度配置常量
+const DIFFICULTY_CONFIG = {
+    easy: {
+        name: '容易',
+        maxNumber: 10,
+        initialSpeed: 600,
+        speedDecrease: 50,
+        minSpeed: 50,
+        storageKey: 'mathSnake_easy_leaderboard'
+    },
+    hard: {
+        name: '困难',
+        maxNumber: 20,
+        initialSpeed: 400,
+        speedDecrease: 50,
+        minSpeed: 50,
+        storageKey: 'mathSnake_hard_leaderboard'
+    }
+};
+
+const DEFAULT_DIFFICULTY = 'easy';
+const DIFFICULTY_STORAGE_KEY = 'mathSnake_difficulty';
+
+function saveDifficulty(difficulty) {
+    localStorage.setItem(DIFFICULTY_STORAGE_KEY, difficulty);
+}
+
+function loadDifficulty() {
+    const saved = localStorage.getItem(DIFFICULTY_STORAGE_KEY);
+    return saved && DIFFICULTY_CONFIG[saved] ? saved : DEFAULT_DIFFICULTY;
+}
+
 // 题目生成器
 class QuestionGenerator {
+    constructor(maxNumber = 20) {
+        this.maxNumber = maxNumber;
+    }
+
     generateAddition() {
-        const a = Math.floor(Math.random() * 21);
-        const b = Math.floor(Math.random() * (21 - a));
+        const a = Math.floor(Math.random() * (this.maxNumber + 1));
+        const b = Math.floor(Math.random() * (this.maxNumber + 1 - a));
         return {
             text: `${a} + ${b} = ?`,
             answer: a + b
         };
     }
-    
+
     generateSubtraction() {
-        const a = Math.floor(Math.random() * 21);
+        const a = Math.floor(Math.random() * (this.maxNumber + 1));
         const b = Math.floor(Math.random() * (a + 1));
         return {
             text: `${a} - ${b} = ?`,
             answer: a - b
         };
     }
-    
+
     generateRandomQuestion() {
         return Math.random() > 0.5 ? this.generateAddition() : this.generateSubtraction();
     }
-    
+
     generateWrongOptions(correctAnswer, count) {
         const options = [];
         while (options.length < count) {
             let wrong;
             do {
-                wrong = Math.floor(Math.random() * 21);
+                wrong = Math.floor(Math.random() * (this.maxNumber + 1));
             } while (wrong === correctAnswer || options.includes(wrong));
             options.push(wrong);
         }
@@ -101,8 +137,8 @@ class Snake {
 
 // 排行榜管理器
 class LeaderboardManager {
-    constructor() {
-        this.storageKey = 'mathSnake_leaderboard';
+    constructor(storageKey = 'mathSnake_leaderboard') {
+        this.storageKey = storageKey;
         this.maxEntries = 10;
     }
     
@@ -154,30 +190,33 @@ class AnswerBlock {
 
 // 游戏主控制器
 class Game {
-    constructor() {
+    constructor(difficulty = loadDifficulty()) {
+        this.difficulty = difficulty;
+        this.difficultyConfig = DIFFICULTY_CONFIG[this.difficulty];
+
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
         this.gridSize = 30;
         this.gridWidth = this.canvas.width / this.gridSize;
         this.gridHeight = this.canvas.height / this.gridSize;
-        
+
         this.score = 0;
         this.highScore = 0;
         this.isRunning = false;
         this.isPaused = false;
-        this.gameSpeed = 400;
+        this.gameSpeed = this.difficultyConfig.initialSpeed;
         this.successCount = 0; // 追踪成功吃下方块的次数
-        
+
         this.snake = null;
         this.currentQuestion = null;
         this.answerBlocks = [];
-        this.questionGenerator = new QuestionGenerator();
-        this.leaderboard = new LeaderboardManager();
-        
+        this.questionGenerator = new QuestionGenerator(this.difficultyConfig.maxNumber);
+        this.leaderboard = new LeaderboardManager(this.difficultyConfig.storageKey);
+
         // 触摸控制变量
         this.touchStartX = 0;
         this.touchStartY = 0;
-        
+
         // 答案方块颜色池
         this.blockColors = [
             '#95E1D3', // 浅绿色
@@ -187,10 +226,11 @@ class Game {
             '#6BCB77', // 绿色
             '#FF6B6B'  // 红色
         ];
-        
+
         this.loadHighScore();
         this.setupEventListeners();
         this.drawInitialScreen();
+        this.updateDifficultyDisplay();
     }
     
     loadHighScore() {
@@ -201,12 +241,21 @@ class Game {
     
     setupEventListeners() {
         document.addEventListener('keydown', (e) => this.handleKeyDown(e));
-        
+
         document.getElementById('startBtn').addEventListener('click', () => this.start());
         document.getElementById('pauseBtn').addEventListener('click', () => this.togglePause());
         document.getElementById('restartBtn').addEventListener('click', () => this.restart());
         document.getElementById('showLeaderboardBtn').addEventListener('click', () => this.showLeaderboard());
-        
+
+        // 添加难度选择按钮事件
+        document.getElementById('difficultyEasyBtn').addEventListener('click', () => {
+            this.changeDifficulty('easy');
+        });
+
+        document.getElementById('difficultyHardBtn').addEventListener('click', () => {
+            this.changeDifficulty('hard');
+        });
+
         document.getElementById('saveScoreBtn').addEventListener('click', () => this.saveScore());
         document.getElementById('skipSaveBtn').addEventListener('click', () => this.hideNameInputModal());
         document.getElementById('closeLeaderboardBtn').addEventListener('click', () => this.hideLeaderboard());
@@ -288,7 +337,7 @@ class Game {
     
     handleKeyDown(e) {
         if (!this.isRunning) return;
-        
+
         switch (e.key) {
             case 'ArrowUp':
                 e.preventDefault();
@@ -312,20 +361,74 @@ class Game {
                 break;
         }
     }
-    
+
+    changeDifficulty(newDifficulty) {
+        if (this.isRunning) {
+            // 游戏进行中不允许切换
+            return;
+        }
+
+        this.difficulty = newDifficulty;
+        this.difficultyConfig = DIFFICULTY_CONFIG[newDifficulty];
+
+        // 重新初始化游戏组件
+        this.questionGenerator = new QuestionGenerator(this.difficultyConfig.maxNumber);
+        this.leaderboard = new LeaderboardManager(this.difficultyConfig.storageKey);
+
+        // 保存难度选择
+        saveDifficulty(newDifficulty);
+
+        // 更新UI显示
+        this.updateDifficultyDisplay();
+
+        // 重新加载最高分
+        this.loadHighScore();
+    }
+
+    updateDifficultyDisplay() {
+        const difficultyDisplay = document.getElementById('difficultyDisplay');
+        if (difficultyDisplay) {
+            difficultyDisplay.textContent = this.difficultyConfig.name;
+        }
+
+        // 更新难度选择按钮状态
+        const easyBtn = document.getElementById('difficultyEasyBtn');
+        const hardBtn = document.getElementById('difficultyHardBtn');
+
+        if (easyBtn && hardBtn) {
+            if (this.difficulty === 'easy') {
+                easyBtn.classList.add('active');
+                hardBtn.classList.remove('active');
+            } else {
+                easyBtn.classList.remove('active');
+                hardBtn.classList.add('active');
+            }
+
+            // 游戏进行中禁用按钮
+            if (this.isRunning) {
+                easyBtn.disabled = true;
+                hardBtn.disabled = true;
+            } else {
+                easyBtn.disabled = false;
+                hardBtn.disabled = false;
+            }
+        }
+    }
+
     start() {
         if (this.isRunning) return;
-        
+
         this.snake = new Snake(Math.floor(this.gridWidth / 2), Math.floor(this.gridHeight / 2));
         this.score = 0;
         this.successCount = 0; // 重置成功计数
-        this.gameSpeed = 400; // 重置初始速度
+        this.gameSpeed = this.difficultyConfig.initialSpeed; // 重置初始速度
         this.isRunning = true;
         this.isPaused = false;
-        
+
         this.generateQuestion();
         this.updateScoreDisplay();
-        
+        this.updateDifficultyDisplay();
+
         this.gameLoop();
     }
     
@@ -453,12 +556,12 @@ class Game {
                     this.score += 10;
                     this.snake.grow();
                     this.successCount++; // 增加成功计数
-                    
+
                     // 每吃5次方块，速度增加50ms（减少gameSpeed值）
-                    if (this.successCount % 5 === 0 && this.gameSpeed > 50) {
-                        this.gameSpeed -= 50;
+                    if (this.successCount % 5 === 0 && this.gameSpeed > this.difficultyConfig.minSpeed) {
+                        this.gameSpeed -= this.difficultyConfig.speedDecrease;
                     }
-                    
+
                     this.updateScoreDisplay();
                     // 清空所有答案方块，避免在下一帧碰撞到其他方块
                     this.answerBlocks = [];
@@ -576,6 +679,7 @@ class Game {
     
     hideNameInputModal() {
         document.getElementById('nameInputModal').classList.add('hidden');
+        this.updateDifficultyDisplay();
         this.showLeaderboard();
     }
     
@@ -595,13 +699,24 @@ class Game {
     
     hideGameOverModal() {
         document.getElementById('gameOverModal').classList.add('hidden');
+        this.updateDifficultyDisplay();
     }
     
     showLeaderboard() {
-        const leaderboard = this.leaderboard.getLeaderboard();
         const tbody = document.getElementById('leaderboardBody');
+        tbody.innerHTML = '<tr><td colspan="4">加载中...</td></tr>';
+
+        // 更新标题显示难度信息
+        const modalTitle = document.querySelector('#leaderboardModal h2');
+        if (modalTitle) {
+            modalTitle.textContent = `🏆 ${this.difficultyConfig.name}难度排行榜 🏆`;
+        }
+
+        document.getElementById('leaderboardModal').classList.remove('hidden');
+
+        const leaderboard = this.leaderboard.getLeaderboard();
         tbody.innerHTML = '';
-        
+
         if (leaderboard.length === 0) {
             tbody.innerHTML = '<tr><td colspan="4">暂无记录</td></tr>';
         } else {
@@ -610,7 +725,7 @@ class Game {
                 const rank = index + 1;
                 const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
                 const rankClass = rank <= 3 ? `rank-${rank}` : '';
-                
+
                 row.innerHTML = `
                     <td class="${rankClass}">${rankIcon}</td>
                     <td class="${rankClass}">${entry.name}</td>
@@ -620,8 +735,6 @@ class Game {
                 tbody.appendChild(row);
             });
         }
-        
-        document.getElementById('leaderboardModal').classList.remove('hidden');
     }
     
     hideLeaderboard() {

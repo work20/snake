@@ -41,6 +41,55 @@ body {
     font-weight: bold;
 }
 
+/* 难度显示区域 */
+.difficulty-display {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+/* 难度选择按钮容器 */
+.difficulty-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* 难度按钮样式 */
+.difficulty-btn {
+    padding: 8px 20px;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    background: white;
+    color: #667eea;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.difficulty-btn:hover:not(:disabled) {
+    background: #667eea;
+    color: white;
+    transform: scale(1.05);
+}
+
+.difficulty-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 激活状态的难度按钮 */
+.difficulty-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #764ba2;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
 .canvas-container {
     display: flex;
     justify-content: center;
@@ -404,7 +453,22 @@ body {
         padding: 8px;
         margin-bottom: 6px;
     }
-    
+
+    .difficulty-display {
+        font-size: 0.9em;
+        margin-bottom: 8px;
+    }
+
+    .difficulty-selector {
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .difficulty-btn {
+        padding: 6px 15px;
+        font-size: 12px;
+    }
+
     .canvas-container {
         margin-bottom: 6px;
     }

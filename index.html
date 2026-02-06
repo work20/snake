@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>数学贪吃蛇</title>
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
     <div class="container">
@@ -13,7 +13,18 @@
         <div class="question-display">
             题目：<span id="questionText">5 + 3 = ?</span>
         </div>
-        
+
+        <!-- 难度显示区域 -->
+        <div class="difficulty-display">
+            <span>难度：<span id="difficultyDisplay">容易</span></span>
+        </div>
+
+        <!-- 难度选择按钮 -->
+        <div class="difficulty-selector">
+            <button id="difficultyEasyBtn" class="difficulty-btn">容易</button>
+            <button id="difficultyHardBtn" class="difficulty-btn">困难</button>
+        </div>
+
         <div class="canvas-container">
             <canvas id="gameCanvas" width="360" height="390"></canvas>
         </div>
@@ -99,6 +110,6 @@
         </div>
     </div>
     
-    <script src="game.js?v=3"></script>
+    <script src="game.js?v=4"></script>
 </body>
 </html>
